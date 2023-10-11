@@ -1,8 +1,6 @@
 import React from "react";
-import { useUsersQuery } from "@/modules/users/use-users";
 import { UsersTable } from "@/modules/users/users-table";
 import Head from "next/head";
-import { CountryCode } from "@/lib/utils";
 
 export default function Home() {
   return (
