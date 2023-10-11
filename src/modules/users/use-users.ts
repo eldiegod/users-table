@@ -11,6 +11,10 @@ const UserSchema = z.object({
     city: z.string(),
     country: z.string(),
   }),
+  registered: z.object({
+    date: z.string(),
+    age: z.number(),
+  }),
   email: z.string(),
   login: z.object({
     uuid: z.string(),
@@ -33,10 +37,7 @@ async function fetchUsers(countryCodes: CountryCode[]) {
   searchQueryParams.set("results", "50");
   searchQueryParams.set("seed", "123");
   searchQueryParams.set("exc", "id");
-
-  countryCodes.forEach((code) => {
-    searchQueryParams.append("nat", code);
-  });
+  searchQueryParams.set("nat", countryCodes.join(","));
 
   const queryParams = searchQueryParams.toString();
 

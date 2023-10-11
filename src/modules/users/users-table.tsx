@@ -1,4 +1,5 @@
 import * as React from "react";
+import { format } from "date-fns";
 import {
   ColumnFiltersState,
   createColumnHelper,
@@ -9,7 +10,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import { CalendarDays, ChevronDown, MapPin, Phone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { COUNTRY_LIST, CountryCode } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export function UsersTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -123,14 +129,58 @@ export function UsersTable() {
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className="cursor-pointer">
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto">
+                          <div className="flex justify-between space-x-4">
+                            <Avatar>
+                              <AvatarImage
+                                src={row.original.picture.thumbnail}
+                              />
+                            </Avatar>
+                            <div className="flex flex-col gap-2">
+                              <h4 className="pb-0.5 text-sm font-semibold">
+                                {row.original.name.first +
+                                  " " +
+                                  row.original.name.last}
+                              </h4>
+                              <div className="items flex">
+                                <Phone className="mr-2 h-4 w-4 shrink-0 opacity-70" />{" "}
+                                <span className="items flex text-xs text-muted-foreground">
+                                  {row.original.phone}
+                                </span>
+                              </div>
+                              <div className="items flex">
+                                <MapPin className="mr-2 h-4 w-4 shrink-0 opacity-70" />{" "}
+                                <span className="items flex text-xs text-muted-foreground">
+                                  {row.original.location.city +
+                                    ", " +
+                                    row.original.location.country}
+                                </span>
+                              </div>
+                              <div className="flex items-center">
+                                <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+                                <span className="text-xs text-muted-foreground">
+                                  Joined{" "}
+                                  {format(
+                                    new Date(row.original.registered.date),
+                                    "MMMM, yyyy",
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     ))}
                   </TableRow>
                 ))
